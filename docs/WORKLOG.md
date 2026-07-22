@@ -1,5 +1,7 @@
 # Worklog
 
+- 2026-07-23 02:14:22 IDT — Started CAVE-007 first-playable freeze: auditing entry, Pointer Lock, door/reset lifecycle, route integrity, diagnostics, and final browser evidence without adding content.
+- 2026-07-23 — Completed CAVE-007: froze the first playable, added Pointer Lock entry/recovery safeguards and lifecycle coverage, refreshed evidence, and confirmed no CAVE-008 room work began.
 - 2026-07-23 01:57:47 IDT — Started CAVE-006 visual production, atmosphere, and performance review; preserving the locked route while replacing repetitive presentation layers and validating lifecycle metrics.
 - 2026-07-23 — Completed CAVE-006: improved exterior rock variation, corridor/hall architectural dressing, door plaques and reinforcement, scoped lighting, door-reset cleanup, review-zone diagnostics, and Playwright evidence. CAVE-007 was not started.
 - 2026-07-23 — Closed CAVE-005 browser evidence: three suite scenarios passed previously and the full exterior-to-hall scenario completed individually with all nine captures.

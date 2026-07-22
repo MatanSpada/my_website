@@ -1,3 +1,3 @@
 # Status
 
-CAVE-006 — COMPLETE AND VALIDATED. The exterior, corridor, and specialization hall have a unified procedural stone/wood/iron presentation, scoped local lighting, stable review telemetry, and refreshed browser evidence. Next: CAVE-007 — First Playable Freeze and Final Quality Pass.
+CAVE-007 — COMPLETE, VALIDATED, AND FROZEN. The exterior-to-hall journey, locked controller, door state machine, collision envelope, review diagnostics, and lifecycle counts are the approved first playable. Next: CAVE-008 — Design and Build the First Specialization Portfolio Room.

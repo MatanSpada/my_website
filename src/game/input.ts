@@ -2,10 +2,10 @@ export type InputState = { forward: boolean; backward: boolean; left: boolean; r
 export class PlayerInput {
   readonly state: InputState = { forward: false, backward: false, left: false, right: false };
   private listeners = 0;
-  constructor(private readonly onReset: () => void, private readonly review: boolean, private readonly onInteract: () => void) {
+  constructor(private readonly onReset: () => void, private readonly review: boolean, private readonly onInteract: () => void, private readonly isActive: () => boolean) {
     window.addEventListener("keydown", this.keyDown); window.addEventListener("keyup", this.keyUp); window.addEventListener("blur", this.clear); document.addEventListener("pointerlockchange", this.onLock); this.listeners = 4;
   }
-  private keyDown = (event: KeyboardEvent) => { if (this.review && event.code === "KeyR") this.onReset(); if(event.code==="Enter"&&!event.repeat)this.onInteract(); this.set(event.code, true); };
+  private keyDown = (event: KeyboardEvent) => { if (this.review && event.code === "KeyR") this.onReset(); if (!this.isActive()) return; if(event.code==="Enter"&&!event.repeat)this.onInteract(); this.set(event.code, true); };
   private keyUp = (event: KeyboardEvent) => this.set(event.code, false);
   private set(code: string, value: boolean) { if (code === "KeyW" || code === "ArrowUp") this.state.forward = value; if (code === "KeyS" || code === "ArrowDown") this.state.backward = value; if (code === "KeyA" || code === "ArrowLeft") this.state.left = value; if (code === "KeyD" || code === "ArrowRight") this.state.right = value; }
   clear = () => { Object.keys(this.state).forEach((key) => { this.state[key as keyof InputState] = false; }); };

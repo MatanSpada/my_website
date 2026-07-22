@@ -4,4 +4,5 @@
 4. CAVE-004 — COMPLETE AND VALIDATED
 5. CAVE-005 — COMPLETE AND VALIDATED
 6. CAVE-006 — COMPLETE AND VALIDATED
-7. CAVE-007 — First Playable Freeze and Final Quality Pass
+7. CAVE-007 — COMPLETE, VALIDATED, AND FROZEN
+8. CAVE-008 — Design and Build the First Specialization Portfolio Room
