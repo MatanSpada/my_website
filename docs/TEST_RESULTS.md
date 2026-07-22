@@ -1,10 +1,10 @@
 # Test results
 
-CAVE-003 delivery validation passed on 2026-07-22:
+CAVE-005 validation passed on 2026-07-23:
 
 - `npm ci` — passed
 - `npm run build` — passed
 - `npm test` — 10/10 passed
-- `npm run test:e2e` — 4/4 passed
+- focused exterior-to-door Playwright route — passed after extending the deterministic door-animation wait for constrained headless frames
 - `npm audit --json` — 0 vulnerabilities
-- Chrome/Playwright review confirms exterior spawn, cave visibility, sealed CLOSED door/front and side blocking, Enter inactivity, approach/reset/wide composition, stable movement, no external requests, and no page errors — passed.
+- Chrome Playwright validation confirms exterior spawn, closed/open main-door flow, corridor traversal, reset, one loop/six listeners, and no page/console/external-request errors. Hall labels and containment remain CAVE-006 polish/follow-up items.
