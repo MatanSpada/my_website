@@ -1,2 +1,7 @@
+# Project-scoped custom agents are defined under:
+# .codex/agents/*.toml
+#
+# Subagents are enabled by default.
+
 [agents]
 max_concurrent_threads_per_session = 3
