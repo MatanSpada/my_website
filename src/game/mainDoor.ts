@@ -1,19 +1,18 @@
-import { Color3, MeshBuilder, PhysicsAggregate, PhysicsShapeType, StandardMaterial, Vector3, type Scene } from "@babylonjs/core";
-
-export const DOOR_STATE = "CLOSED" as const;
-export type MainDoor = { state: typeof DOOR_STATE; position: Vector3; collisionEnabled: true };
+import { Color3, MeshBuilder, PhysicsAggregate, PhysicsShapeType, StandardMaterial, TransformNode, Vector3, type Scene } from "@babylonjs/core";
+export type DoorState = "CLOSED" | "OPENING" | "OPEN";
+export type MainDoor = { position: Vector3; state: DoorState; angle: number; sealEnabled: boolean; traversable: boolean; root: TransformNode; interact(): boolean; update(dt:number): void; reset(): void };
 
 export function buildMainDoor(scene: Scene, position: Vector3): MainDoor {
-  const wood = new StandardMaterial("door-oak", scene); wood.diffuseColor = new Color3(.13, .065, .025); wood.specularColor = new Color3(.04, .025, .01);
-  const iron = new StandardMaterial("door-iron", scene); iron.diffuseColor = new Color3(.09, .1, .1); iron.specularColor = new Color3(.16, .17, .16);
-  const slab = MeshBuilder.CreateBox("main-door-closed", { width: 3.8, height: 4.6, depth: .34 }, scene); slab.position.copyFrom(position); slab.position.y = 2.3; slab.material = wood;
-  new PhysicsAggregate(slab, PhysicsShapeType.BOX, { mass: 0, friction: .9 }, scene);
-  // One deliberately oversized CLOSED-state seal closes both leaf-edge and jamb gaps.
-  // CAVE-004 can replace this single aggregate when the door begins to animate.
-  const seal = MeshBuilder.CreateBox("main-door-closed-seal", { width: 5.05, height: 5.2, depth: .9 }, scene); seal.position.set(position.x, 2.6, position.z + .1); seal.isVisible = false;
-  new PhysicsAggregate(seal, PhysicsShapeType.BOX, { mass: 0, friction: .95 }, scene);
-  for (const x of [-1.55, 0, 1.55]) { const band = MeshBuilder.CreateBox(`door-band-${x}`, { width: .16, height: 4.8, depth: .43 }, scene); band.position.set(position.x + x, 2.3, position.z - .03); band.material = iron; }
-  for (const y of [1.05, 2.3, 3.55]) { const band = MeshBuilder.CreateBox(`door-brace-${y}`, { width: 3.95, height: .15, depth: .44 }, scene); band.position.set(position.x, y, position.z - .03); band.material = iron; }
-  for (const x of [-1.72, 1.72]) { const hinge = MeshBuilder.CreateCylinder(`door-hinge-${x}`, { height: 4.8, diameter: .18 }, scene); hinge.position.set(position.x + x, 2.3, position.z + .24); hinge.material = iron; }
-  return { state: DOOR_STATE, position: position.clone(), collisionEnabled: true };
+  const wood=new StandardMaterial("door-oak",scene); wood.diffuseColor=new Color3(.18,.085,.03); const iron=new StandardMaterial("door-iron",scene); iron.diffuseColor=new Color3(.12,.13,.13);
+  const root=new TransformNode("main-door-hinge",scene); root.position.set(position.x-1.9,0,position.z);
+  const slab=MeshBuilder.CreateBox("main-door-leaf",{width:3.8,height:4.6,depth:.34},scene); slab.parent=root; slab.position.set(1.9,2.3,0); slab.material=wood;
+  for(const x of [.35,1.9,3.45]){const band=MeshBuilder.CreateBox(`door-band-${x}`,{width:.16,height:4.8,depth:.43},scene);band.parent=root;band.position.set(x,2.3,-.03);band.material=iron;}
+  for(const y of [1.05,2.3,3.55]){const brace=MeshBuilder.CreateBox(`door-brace-${y}`,{width:3.95,height:.15,depth:.44},scene);brace.parent=root;brace.position.set(1.9,y,-.03);brace.material=iron;}
+  let leaf:PhysicsAggregate|undefined; let seal:PhysicsAggregate|undefined; const createColliders=()=>{leaf=new PhysicsAggregate(slab,PhysicsShapeType.BOX,{mass:0,friction:.9},scene); const block=MeshBuilder.CreateBox("main-door-closed-seal",{width:5.05,height:5.2,depth:.9},scene);block.position.set(position.x,2.6,position.z+.1);block.isVisible=false;seal=new PhysicsAggregate(block,PhysicsShapeType.BOX,{mass:0,friction:.95},scene);}; createColliders();
+  let state:DoorState="CLOSED", angle=0, released=false; const max=-1.38;
+  return { position:position.clone(), get state(){return state;}, get angle(){return angle;}, get sealEnabled(){return !!seal;}, get traversable(){return state==="OPEN";}, root,
+    interact(){if(state!=="CLOSED")return false;state="OPENING";return true;},
+    update(dt){if(state!=="OPENING")return;angle=Math.max(max,angle-dt*.72);root.rotation.y=angle;if(!released&&Math.abs(angle)>.88){leaf?.dispose();seal?.dispose();leaf=undefined;seal=undefined;released=true;}if(angle===max)state="OPEN";},
+    reset(){leaf?.dispose();seal?.dispose();angle=0;root.rotation.y=0;state="CLOSED";released=false;createColliders();}
+  };
 }
