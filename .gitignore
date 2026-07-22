@@ -1,0 +1,5 @@
+matan_spada_cv.pdf
+node_modules/
+dist/
+playwright-report/
+test-results/

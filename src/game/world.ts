@@ -1,0 +1,7 @@
+import { Color3, MeshBuilder, PhysicsAggregate, PhysicsShapeType, StandardMaterial, type Scene } from "@babylonjs/core";
+export type Obstacle = { minX: number; maxX: number; minZ: number; maxZ: number };
+export const obstacles: Obstacle[] = [
+  { minX: -10, maxX: 10, minZ: -10.3, maxZ: -9.7 }, { minX: -10, maxX: 10, minZ: 9.7, maxZ: 10.3 }, { minX: -10.3, maxX: -9.7, minZ: -10, maxZ: 10 }, { minX: 9.7, maxX: 10.3, minZ: -10, maxZ: 10 },
+  { minX: -2, maxX: 2, minZ: -1.4, maxZ: -.7 }, { minX: -2, maxX: -.7, minZ: -1.4, maxZ: 5 }, { minX: .7, maxX: 2, minZ: -1.4, maxZ: 5 }, { minX: 4, maxX: 5.2, minZ: 3, maxZ: 4.2 }
+];
+export function buildWorld(scene: Scene) { const material = new StandardMaterial("stone", scene); material.diffuseColor = new Color3(.12, .16, .17); const floor = MeshBuilder.CreateGround("floor", { width: 20, height: 20 }, scene); floor.material = material; new PhysicsAggregate(floor, PhysicsShapeType.BOX, { mass: 0 }, scene); for (const [i, box] of obstacles.entries()) { const wall = MeshBuilder.CreateBox(`wall-${i}`, { width: box.maxX - box.minX, height: 3.4, depth: box.maxZ - box.minZ }, scene); wall.position.set((box.minX + box.maxX)/2, 1.7, (box.minZ + box.maxZ)/2); wall.material = material; new PhysicsAggregate(wall, PhysicsShapeType.BOX, { mass: 0 }, scene); } const low = MeshBuilder.CreateBox("low-reference", { size: .8 }, scene); low.position.set(-5,.4,-3); low.material = material; const tall = MeshBuilder.CreateBox("tall-reference", { width:.9,height:4,depth:.9 },scene); tall.position.set(5,2,-3); tall.material=material; }
