@@ -1,3 +1,3 @@
 # Status
 
-CAVE-004 — COMPLETE AND VALIDATED. The cave door opens through an Enter-gated CLOSED → OPENING → OPEN lifecycle and reset restores the exterior. Next: CAVE-005 — Build the Cave Interior and Specialization Hall.
+CAVE-005 — COMPLETE AND VALIDATED. The main door now leads through a stone corridor to five closed specialization doors. Next: CAVE-006 — Visual Production and Atmosphere Polish.
