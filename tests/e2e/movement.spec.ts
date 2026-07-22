@@ -108,3 +108,23 @@ test("review URLs retain comparisons and invalid profiles safely select locked",
   expect(samples.responsive.stopped).toBeLessThan(samples.locked.stopped);
   expect(samples.locked.stopped).toBeLessThan(samples.grounded.stopped);
 });
+
+test("cave entrance exterior keeps the CLOSED door readable, blocking, and interaction-free", async ({ page }) => {
+  const errors: string[] = []; const external: string[] = [];
+  page.on("pageerror", error => errors.push(error.message));
+  page.on("request", request => { if (!request.url().startsWith("http://127.0.0.1:")) external.push(request.url()); });
+  await page.goto("/?review=cave-entrance"); await page.waitForFunction(() => window.__CAVE_GAME_TEST__);
+  const initial = await snapshot(page);
+  expect(initial.world).toBe("cave-entrance"); expect(initial.selectedProfile).toBe("locked");
+  expect(initial.spawnPosition).toEqual({ x: 0, y: .9, z: 9 }); expect(initial.doorState).toBe("CLOSED"); expect(initial.doorCollisionEnabled).toBe(true);
+  await page.screenshot({ path: "docs/review/cave-003-spawn.png" }); await enter(page); await page.keyboard.press("r"); await page.waitForTimeout(180);
+  await move(page, ["w"], 1100); await page.screenshot({ path: "docs/review/cave-003-approach.png" });
+  const approach = await snapshot(page); expect(approach.distanceToDoor, JSON.stringify({ initial, approach })).toBeLessThan(initial.distanceToDoor);
+  await move(page, ["w"], 3500); const door = await snapshot(page); await page.screenshot({ path: "docs/review/cave-003-main-door.png" });
+  expect(door.playerPosition.z).toBeGreaterThan(-4.9); expect(door.distanceToDoor, JSON.stringify(door)).toBeLessThan(2); expect(door.doorState).toBe("CLOSED");
+  await page.keyboard.press("Enter"); await page.waitForTimeout(180); const afterEnter = await snapshot(page); await page.screenshot({ path: "docs/review/cave-003-door-collision.png" });
+  expect(afterEnter.doorState).toBe("CLOSED"); expect(afterEnter.doorCollisionEnabled).toBe(true);
+  await page.keyboard.press("r"); await page.waitForTimeout(180); await move(page, ["s"], 850); await page.screenshot({ path: "docs/review/cave-003-wide-entrance.png" });
+  const wide = await snapshot(page); expect(wide.playerPosition.z).toBeGreaterThanOrEqual(initial.playerPosition.z); expect(wide.activeGameLoopCount).toBe(1); expect(wide.inputListenerCount).toBe(6);
+  expect(errors).toEqual([]); expect(external).toEqual([]);
+});

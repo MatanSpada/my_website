@@ -1,5 +1,3 @@
-# CAVE-001 Movement Prototype
+# Cave exterior prototype
 
-Desktop Chrome first-person technical chamber powered by Babylon.js and Havok.
-
-Run `npm ci`, `npm run dev -- --host 127.0.0.1 --port 5175`, then open `/?review=movement&profile=grounded`.
+Desktop-Chrome first-person cave entrance powered by Babylon.js and Havok. The normal URL loads the closed-door exterior. Review routes: `/?review=cave-entrance`, `/?review=movement&profile=locked`, and `/?review=chamber`.

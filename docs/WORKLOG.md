@@ -1,5 +1,7 @@
 # Worklog
 
+- 2026-07-22 22:56:57 IDT — Started CAVE-003: inspecting the locked controller and replacing the normal scene with a playable cave-entrance exterior while preserving the chamber as review-only.
+- 2026-07-22 23:05:00 IDT — Completed CAVE-003: added local procedural exterior geometry, static facade/door collision, CLOSED door state, atmosphere, review diagnostics, and entrance browser coverage; no CAVE-004 interaction started.
 - 2026-07-22 22:33:35 IDT — Started CAVE-002 game-feel lock: inspecting the inherited movement foundation, comparison profiles, Chrome behavior, telemetry, and validation coverage before tuning.
 - 2026-07-22 22:42:27 IDT — Locked CAVE-002 after three Chrome/telemetry tuning passes. Added the `locked` default, explicit physical capsule endpoints to prevent camera-height settling, and expanded unit/Playwright coverage for selection, controlled acceleration/stopping, physical grounding, effects, collision, passage, reset, and listener/loop stability.
 - Bootstrapped Vite, strict TypeScript, Babylon.js, Havok, Vitest, and Playwright.
