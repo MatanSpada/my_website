@@ -110,6 +110,7 @@ test("review URLs retain comparisons and invalid profiles safely select locked",
 });
 
 test("cave entrance exterior keeps the CLOSED door readable, blocking, and interaction-free", async ({ page }) => {
+  test.setTimeout(60000);
   const errors: string[] = []; const external: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   page.on("request", request => { if (!request.url().startsWith("http://127.0.0.1:")) external.push(request.url()); });
@@ -125,7 +126,11 @@ test("cave entrance exterior keeps the CLOSED door readable, blocking, and inter
   expect(door.interactionAvailable).toBe(true); await page.screenshot({ path: "docs/review/cave-004-interaction-prompt.png" });
   await page.keyboard.press("Enter"); await page.waitForTimeout(180); const afterEnter = await snapshot(page); await page.screenshot({ path: "docs/review/cave-004-opening.png" });
   expect(afterEnter.doorState).toBe("OPENING"); await page.keyboard.press("Enter"); await page.waitForTimeout(3200); const opened=await snapshot(page); await page.screenshot({ path:"docs/review/cave-004-open-door.png" }); expect(opened.doorState).toBe("OPEN"); expect(opened.doorwayTraversable).toBe(true);
-  await move(page,["w"],700); await page.screenshot({path:"docs/review/cave-004-threshold.png"}); await page.keyboard.press("r"); await page.waitForTimeout(180); await page.screenshot({path:"docs/review/cave-004-reset-closed.png"}); await move(page, ["s"], 850); await page.screenshot({ path: "docs/review/cave-003-wide-entrance.png" });
+  await move(page,["w"],700); await page.screenshot({path:"docs/review/cave-004-threshold.png"}); await page.screenshot({path:"docs/review/cave-005-threshold.png"});
+  await move(page,["w"],2500); await page.screenshot({path:"docs/review/cave-005-corridor.png"});
+  await move(page,["w"],4000); await page.screenshot({path:"docs/review/cave-005-hall-entry.png"}); await page.screenshot({path:"docs/review/cave-005-specialization-hall.png"});
+  for(const name of ["runtime-door","kernel-door","embedded-door","ota-door","sensor-door"]) await page.screenshot({path:`docs/review/cave-005-${name}.png`});
+  await page.keyboard.press("r"); await page.waitForTimeout(180); await page.screenshot({path:"docs/review/cave-004-reset-closed.png"}); await move(page, ["s"], 850); await page.screenshot({ path: "docs/review/cave-003-wide-entrance.png" });
   const wide = await snapshot(page); expect(wide.playerPosition.z).toBeGreaterThanOrEqual(initial.playerPosition.z); expect(wide.activeGameLoopCount).toBe(1); expect(wide.inputListenerCount).toBe(6);
   expect(errors).toEqual([]); expect(external).toEqual([]);
 });

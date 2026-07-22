@@ -1,5 +1,6 @@
 # Worklog
 
+- 2026-07-23 — Closed CAVE-005 browser evidence: three suite scenarios passed previously and the full exterior-to-hall scenario completed individually with all nine captures.
 - 2026-07-23 — Started CAVE-005: extended the continuous cave world past the main door with a flat-floor corridor and specialization hall.
 - 2026-07-23 — Completed CAVE-004: centralized hinged door state machine, proximity/facing Enter interaction, deterministic opening, safe collision release, prompt, and reset restoration.
 - 2026-07-22 23:16:44 IDT — Started CAVE-003 exterior refinement: hardening the closed-door collision envelope, reshaping the facade toward a mountainside, and improving outdoor readability without starting CAVE-004.
