@@ -2,6 +2,7 @@ import { Color3, DynamicTexture, Mesh, MeshBuilder, PhysicsAggregate, PhysicsSha
 
 export const SPECIALIZATIONS = ["RUNTIME THREAT DETECTION", "LINUX KERNEL & eBPF", "EMBEDDED & IoT SYSTEMS", "OTA & DEVICE FLEETS", "SENSOR DATA PIPELINES"] as const;
 export type SpecializationDoor = { id: string; label: string; position: Vector3; state: "CLOSED"; collisionEnabled: true };
+export const LINUX_EBPF_DOOR_ID="specialization-1";
 
 const physicalBox = (scene: Scene, name: string, position: Vector3, size: Vector3, material: StandardMaterial) => {
   const mesh = MeshBuilder.CreateBox(name, { width: size.x, height: size.y, depth: size.z }, scene);
@@ -71,7 +72,7 @@ export function buildCaveInterior(scene: Scene, stone: StandardMaterial, wood: S
     const label = SPECIALIZATIONS[index];
     const isBackDoor = z < -26;
     const rotationY = isBackDoor ? Math.PI : 0;
-    const door = physicalBox(scene, `specialization-${index}`, new Vector3(x, 2.25, z), new Vector3(2.75, 4.5, .42), wood);
+    const door = index===1 ? { position:new Vector3(x,2.25,z) } : physicalBox(scene, `specialization-${index}`, new Vector3(x, 2.25, z), new Vector3(2.75, 4.5, .42), wood);
     const frameZ = z + (isBackDoor ? -.26 : .26);
     for (const side of [-1.63, 1.63]) visualBox(scene, `specialization-${index}-frame-${side}`, new Vector3(x + side, 2.35, frameZ), new Vector3(.33, 4.9, .5), accentStone);
     visualBox(scene, `specialization-${index}-lintel`, new Vector3(x, 4.72, frameZ), new Vector3(3.55, .42, .5), accentStone);

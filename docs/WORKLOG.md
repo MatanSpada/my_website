@@ -1,5 +1,6 @@
 # Worklog
 
+- 2026-07-23 02:33:03 IDT — Started CAVE-008: added the Linux Kernel & eBPF room using only verified repository terminology and no private CV content.
 - 2026-07-23 02:14:22 IDT — Started CAVE-007 first-playable freeze: auditing entry, Pointer Lock, door/reset lifecycle, route integrity, diagnostics, and final browser evidence without adding content.
 - 2026-07-23 — Completed CAVE-007: froze the first playable, added Pointer Lock entry/recovery safeguards and lifecycle coverage, refreshed evidence, and confirmed no CAVE-008 room work began.
 - 2026-07-23 01:57:47 IDT — Started CAVE-006 visual production, atmosphere, and performance review; preserving the locked route while replacing repetitive presentation layers and validating lifecycle metrics.

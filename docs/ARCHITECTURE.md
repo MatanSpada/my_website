@@ -7,3 +7,5 @@
 `CaveGame` exposes read-only review zones (`cave-entrance`, `cave-interior`, and `specialization-hall`) and reports zone, door registry, render metrics, physics-body count, one-loop state, and listener count. `MainDoor` disposes the hidden CLOSED seal mesh as well as its aggregate during release/reset, preventing reset-time mesh growth.
 
 The CAVE-007 entry gate activates movement and interaction only while the canvas owns Pointer Lock. Pointer Lock release clears input and stops the motor once; returning through the same overlay is safe. Unsupported review values fall back to normal play without diagnostics, while supported review routes remain read-only.
+
+`buildMainDoor` is now a reusable hinged-door constructor. The Linux/eBPF door uses the same CLOSED/OPENING/OPEN collision lifecycle as the main door; `CaveGame` selects the nearest eligible closed door. `linuxEbpfRoom.ts` owns a typed, neutral exhibit registry and compact annex collision shell.

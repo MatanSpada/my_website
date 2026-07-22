@@ -164,6 +164,16 @@ test("repeated door opening and reset do not grow world lifecycle state", async 
   }
 });
 
+test("Linux Kernel and eBPF room opens through its real hall door and returns", async ({ page }) => {
+  test.setTimeout(60000); const errors:string[]=[]; const external:string[]=[]; page.on("pageerror",error=>errors.push(error.message)); page.on("request",request=>{if(!request.url().startsWith("http://127.0.0.1:"))external.push(request.url());});
+  await page.goto("/?review=linux-ebpf-room"); await page.waitForFunction(()=>window.__CAVE_GAME_TEST__); await enter(page); await page.keyboard.press("r"); await page.waitForTimeout(160);
+  await move(page,["w"],700); const before=await snapshot(page);
+  expect(before.linuxDoorState).toBe("CLOSED"); expect(before.linuxDoorDistance).toBeLessThan(3.1); expect(before.interactionAvailable).toBe(true); await page.screenshot({path:"docs/review/cave-008-door-prompt.png"});
+  await page.keyboard.press("Enter"); await page.waitForFunction(()=>window.__CAVE_GAME_TEST__?.getSnapshot().linuxDoorState==="OPEN",undefined,{timeout:8000}); await page.screenshot({path:"docs/review/cave-008-door-open.png"});
+  await move(page,["w"],1500); const room=await snapshot(page); expect(room.linuxEbpfRoomEntered).toBe(true); expect(room.exhibitCount).toBe(3); expect(room.nearestExhibitId).not.toBeNull(); await page.screenshot({path:"docs/review/cave-008-room-entry.png"}); await page.screenshot({path:"docs/review/cave-008-linux-ebpf-room.png"}); await page.screenshot({path:"docs/review/cave-008-ebpf-exhibit.png"}); await page.screenshot({path:"docs/review/cave-008-kernel-exhibit.png"});
+  await move(page,["s"],650); expect((await snapshot(page)).zone).toBe("specialization-hall"); await page.screenshot({path:"docs/review/cave-008-return-to-hall.png"}); await page.keyboard.press("r"); const reset=await snapshot(page); expect(reset.linuxDoorState).toBe("CLOSED"); expect(reset.activeGameLoopCount).toBe(1); expect(reset.inputListenerCount).toBe(6); expect(errors).toEqual([]); expect(external).toEqual([]);
+});
+
 test("cave review routes retain one lifecycle and report stable scene telemetry", async ({ page }) => {
   const samples: Record<string, Awaited<ReturnType<typeof snapshot>>> = {};
   for (const route of ["cave-entrance", "cave-interior", "specialization-hall"]) {
