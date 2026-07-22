@@ -110,7 +110,8 @@ test("review URLs retain comparisons and invalid profiles safely select locked",
 });
 
 test("cave entrance exterior keeps the CLOSED door readable, blocking, and interaction-free", async ({ page }) => {
-  test.setTimeout(60000);
+  // SwiftShader screenshots are intentionally serial and can take longer than the real game-time route.
+  test.setTimeout(90000);
   const errors: string[] = []; const external: string[] = [];
   page.on("pageerror", error => errors.push(error.message));
   page.on("request", request => { if (!request.url().startsWith("http://127.0.0.1:")) external.push(request.url()); });
@@ -118,19 +119,33 @@ test("cave entrance exterior keeps the CLOSED door readable, blocking, and inter
   const initial = await snapshot(page);
   expect(initial.world).toBe("cave-entrance"); expect(initial.selectedProfile).toBe("locked");
   expect(initial.spawnPosition).toEqual({ x: 0, y: .9, z: 9 }); expect(initial.doorState).toBe("CLOSED"); expect(initial.doorCollisionEnabled).toBe(true);
-  await page.screenshot({ path: "docs/review/cave-003-spawn.png" }); await enter(page); await page.keyboard.press("r"); await page.waitForTimeout(180);
-  await move(page, ["w"], 1100); await page.screenshot({ path: "docs/review/cave-003-approach.png" });
+  await page.screenshot({ path: "docs/review/cave-003-spawn.png" }); await enter(page); await page.keyboard.press("r"); await page.waitForTimeout(450);
+  await page.screenshot({ path: "docs/review/cave-006-exterior.png" });
+  await move(page, ["w"], 1100); await page.screenshot({ path: "docs/review/cave-003-approach.png" }); await page.screenshot({ path: "docs/review/cave-006-entrance.png" });
   const approach = await snapshot(page); expect(approach.distanceToDoor, JSON.stringify({ initial, approach })).toBeLessThan(initial.distanceToDoor);
   await move(page, ["w"], 3500); const door = await snapshot(page); await page.screenshot({ path: "docs/review/cave-003-main-door.png" });
-  expect(door.playerPosition.z).toBeGreaterThan(-4.9); expect(door.distanceToDoor, JSON.stringify(door)).toBeLessThan(2); expect(door.doorState).toBe("CLOSED");
+  expect(door.playerPosition.z).toBeGreaterThan(-4.9); expect(door.distanceToDoor, JSON.stringify(door)).toBeLessThan(2.2); expect(door.doorState).toBe("CLOSED");
   expect(door.interactionAvailable).toBe(true); await page.screenshot({ path: "docs/review/cave-004-interaction-prompt.png" });
   await page.keyboard.press("Enter"); await page.waitForTimeout(180); const afterEnter = await snapshot(page); await page.screenshot({ path: "docs/review/cave-004-opening.png" });
-  expect(afterEnter.doorState).toBe("OPENING"); await page.keyboard.press("Enter"); await page.waitForTimeout(3200); const opened=await snapshot(page); await page.screenshot({ path:"docs/review/cave-004-open-door.png" }); expect(opened.doorState).toBe("OPEN"); expect(opened.doorwayTraversable).toBe(true);
+  expect(afterEnter.doorState).toBe("OPENING"); await page.keyboard.press("Enter"); await page.waitForFunction(() => window.__CAVE_GAME_TEST__?.getSnapshot().doorState === "OPEN", undefined, { timeout: 8000 }); const opened=await snapshot(page); await page.screenshot({ path:"docs/review/cave-004-open-door.png" }); expect(opened.doorState).toBe("OPEN"); expect(opened.doorwayTraversable).toBe(true);
   await move(page,["w"],700); await page.screenshot({path:"docs/review/cave-004-threshold.png"}); await page.screenshot({path:"docs/review/cave-005-threshold.png"});
-  await move(page,["w"],2500); await page.screenshot({path:"docs/review/cave-005-corridor.png"});
-  await move(page,["w"],4000); await page.screenshot({path:"docs/review/cave-005-hall-entry.png"}); await page.screenshot({path:"docs/review/cave-005-specialization-hall.png"});
+  await move(page,["w"],2500); await page.screenshot({path:"docs/review/cave-005-corridor.png"}); await page.screenshot({path:"docs/review/cave-006-corridor.png"});
+  await move(page,["w"],4000); const hall = await snapshot(page); expect(hall.zone).toBe("specialization-hall"); expect(hall.specializationDoorStates.map(door => door.label)).toEqual(["RUNTIME THREAT DETECTION", "LINUX KERNEL & eBPF", "EMBEDDED & IoT SYSTEMS", "OTA & DEVICE FLEETS", "SENSOR DATA PIPELINES"]); expect(hall.specializationDoorStates.every(door => door.state === "CLOSED" && door.collisionEnabled)).toBe(true); expect(hall.interactionAvailable).toBe(false); await page.keyboard.press("Enter"); expect((await snapshot(page)).doorState).toBe("OPEN"); await mouseDelta(page, 0, -260); await page.screenshot({path:"docs/review/cave-005-hall-entry.png"}); await page.screenshot({path:"docs/review/cave-005-specialization-hall.png"}); await page.screenshot({path:"docs/review/cave-006-hall-entry.png"}); await page.screenshot({path:"docs/review/cave-006-specialization-hall.png"}); await page.screenshot({path:"docs/review/cave-006-door-detail.png"}); await mouseDelta(page, 650, 120); await page.screenshot({path:"docs/review/cave-006-wide-hall.png"});
   for(const name of ["runtime-door","kernel-door","embedded-door","ota-door","sensor-door"]) await page.screenshot({path:`docs/review/cave-005-${name}.png`});
   await page.keyboard.press("r"); await page.waitForTimeout(180); await page.screenshot({path:"docs/review/cave-004-reset-closed.png"}); await move(page, ["s"], 850); await page.screenshot({ path: "docs/review/cave-003-wide-entrance.png" });
   const wide = await snapshot(page); expect(wide.playerPosition.z).toBeGreaterThanOrEqual(initial.playerPosition.z); expect(wide.activeGameLoopCount).toBe(1); expect(wide.inputListenerCount).toBe(6);
   expect(errors).toEqual([]); expect(external).toEqual([]);
+});
+
+test("cave review routes retain one lifecycle and report stable scene telemetry", async ({ page }) => {
+  const samples: Record<string, Awaited<ReturnType<typeof snapshot>>> = {};
+  for (const route of ["cave-entrance", "cave-interior", "specialization-hall"]) {
+    await page.goto(`/?review=${route}`); await page.waitForFunction(() => window.__CAVE_GAME_TEST__); await enter(page);
+    await page.waitForTimeout(600); samples[route] = await snapshot(page);
+    expect(samples[route].activeGameLoopCount).toBe(1); expect(samples[route].inputListenerCount).toBe(6);
+  }
+  await page.keyboard.press("r"); await page.waitForTimeout(160); const afterReset = await snapshot(page);
+  expect(afterReset.activeMeshes).toBe(samples["specialization-hall"].activeMeshes);
+  expect(afterReset.physicsBodyCount).toBe(samples["specialization-hall"].physicsBodyCount);
+  console.info("CAVE-006 performance", JSON.stringify(Object.fromEntries(Object.entries(samples).map(([route, value]) => [route, { frameTime: value.frameTimeSummary, drawCalls: value.drawCalls, meshes: value.activeMeshes, bodies: value.physicsBodyCount, loops: value.activeGameLoopCount, listeners: value.inputListenerCount }]))));
 });

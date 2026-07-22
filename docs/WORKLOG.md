@@ -1,5 +1,7 @@
 # Worklog
 
+- 2026-07-23 01:57:47 IDT — Started CAVE-006 visual production, atmosphere, and performance review; preserving the locked route while replacing repetitive presentation layers and validating lifecycle metrics.
+- 2026-07-23 — Completed CAVE-006: improved exterior rock variation, corridor/hall architectural dressing, door plaques and reinforcement, scoped lighting, door-reset cleanup, review-zone diagnostics, and Playwright evidence. CAVE-007 was not started.
 - 2026-07-23 — Closed CAVE-005 browser evidence: three suite scenarios passed previously and the full exterior-to-hall scenario completed individually with all nine captures.
 - 2026-07-23 — Started CAVE-005: extended the continuous cave world past the main door with a flat-floor corridor and specialization hall.
 - 2026-07-23 — Completed CAVE-004: centralized hinged door state machine, proximity/facing Enter interaction, deterministic opening, safe collision release, prompt, and reset restoration.
