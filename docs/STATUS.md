@@ -1,3 +1,3 @@
 # Status
 
-CAVE-008 — COMPLETE AND VALIDATED. Linux Kernel & eBPF is the sole interactive specialization door and leads to one contained technical exhibit chamber; all other doors remain closed.
+CAVE-008 — COMPLETE AND VALIDATED. Linux Kernel & eBPF is the sole interactive specialization door and leads to one contained technical exhibit chamber; all other doors remain closed and non-interactive. Next work is intentionally not started.
